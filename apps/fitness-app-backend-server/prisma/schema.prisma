@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Receptionist {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?
+  username  String?
+  password  String?
+}
+
+model UserAccount {
+  id        String               @id @default(cuid())
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  email     String?
+  password  String?
+  role      EnumUserAccountRole?
+  username  String?
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  duration  Int?
+  details   String?
+  price     Float?
+  name      String?
+}
+
+model Client {
+  id             String        @id @default(cuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  phoneNumber    String?
+  email          String?
+  notes          String?
+  profilePicture Json?
+  name           String?
+  reservations   Reservation[]
+  feedbacks      Feedback[]
+}
+
+model Schedule {
+  id           String        @id @default(cuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  startTime    DateTime?
+  endTime      DateTime?
+  isRecurring  Boolean?
+  title        String?
+  description  String?
+  reservations Reservation[]
+}
+
+model Feedback {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  rating    Int?
+  comments  String?
+  client    Client?   @relation(fields: [clientId], references: [id])
+  clientId  String?
+  date      DateTime?
+}
+
+model Reservation {
+  id              String    @id @default(cuid())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  notes           String?
+  reservationDate DateTime?
+  client          Client?   @relation(fields: [clientId], references: [id])
+  clientId        String?
+  schedule        Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId      String?
+}
+
+enum EnumUserAccountRole {
+  Option1
+}
